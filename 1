@@ -1,0 +1,47 @@
+public static void main(String[] args) {
+    final int iterations = 10000;
+    System.out.println("chance with    change = " + getChanceForPlay(iterations, true));
+    System.out.println("chance without change = " + getChanceForPlay(iterations, false));
+}
+
+private static double getChanceForPlay(int iterations, boolean doChange) {
+    double win = 0;
+    for (int i = 0; i < iterations; i++) {
+        List<Price> doors = createDoors();
+        int selectedDoor = random.nextInt(3); //the player selects one of three doors
+
+        //let's remove one goat (but not the selected door)
+        for (int currentDoor = 0; currentDoor < 3; currentDoor++) {
+            if (currentDoor != selectedDoor && doors.get(currentDoor) == Price.GOAT) {
+                doors.remove(currentDoor);
+
+                //re-Index, if required
+                selectedDoor = currentDoor < selectedDoor? selectedDoor-1:selectedDoor;
+                break;
+            }
+        }
+
+        //player changes door
+        if (doChange) {
+            selectedDoor = selectedDoor == 0 ? 1 : 0;
+        }
+
+        if (doors.get(selectedDoor) == Price.CAR) {
+            win++;
+        }
+    }
+    return win / iterations;
+}
+
+private static List<Price> createDoors() {
+    List<Price> doors = new ArrayList<>();
+    doors.add(Price.GOAT);
+    doors.add(Price.GOAT);
+    doors.add(Price.CAR);
+    Collections.shuffle(doors);
+    return doors;
+}
+
+private enum Price {
+    GOAT, CAR
+}
